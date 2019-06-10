@@ -1,2 +1,234 @@
 
---
+
+-- Listado de comandos para el manejo inicial de datos geoespaciales en Postgre-Postgis
+   --  Son comandos SQL y  ejemplos con la sintaxis básica para el manejo de los datos  
+
+
+--1.- Creación de una tabla geoespacial con tipo de geometría puntos:
+ -- a) creación de la tabla con campo de geometría incluida
+
+    CREATE TABLE puntos (
+    gid serial, 
+    cve_point varchar(6) primary key, 
+    altura int,
+    geom geometry(point,4326)
+     );
+
+     -- si la tabla ha sido creada sin campo geométrico y éste se desea incluir, se agrega el campo de la siguiente forma
+
+	   alter table puntos 
+    add column geom geometry	(multipoint,4326);
+     -- o
+     select addgeometrycolumn ('public','puntos','geom', 4326, 	'multipoint', 2);
+     
+     -- eliminación de un campo, en este caso del campo geométrico:
+
+        alter table puntos drop column geom
+        -- o 
+        select dropgeometrycolumn('puntos','geom');
+
+
+--  b) población de la tabla 
+
+      	--1: poblar una tabla directamente:
+    
+        INSERT INTO puntos (geom, altura, cve_point) 
+        values 
+        ( st_GeomFromText('POINT( -99.676730756959842 19.285247464898884)', 4326), 2690, 'a1'),
+        (st_GeomFromText( 'POINT( -99.656254900973110 19.29123515121525)',4326),2657,'a2'),
+        (st_GeomFromText( 'POINT( -99.654919288512602 19.271702964576015)',4326),2680,'a3') ;
+
+	      --2: poblar una tabla a partir de otra tabla existente:
+		   
+         insert into puntos (gid, nombre, region,c_ent, geom) 
+         select gid, nom_mun, region, cve_ent, geom
+         from fuente_puntos ;
+
+
+--2.- Creación de una tabla geoespacial con tipo de geometría lineas:
+  --a) creación  
+  
+      CREATE TABLE lineas ( 
+      gid serial,
+      cve_lin varchar(5) primary key, 
+      geom geometry (linestring,4326)
+      );
+  --b) población directa de la tabla:
+  
+    INSERT INTO lineas (geom,cve_lin) 
+    VALUES 
+    (ST_GeomFromText('linestring(-99.676730756959842 19.285247464898884,-99.664919 19.28170296)',4326),'a1'),
+    (ST_GeomFromText('linestring(-99.656254900973110 19.29123515121525,-99.654919288512602 19.271702964576015)',4326),'a2');
+    
+ 
+--3.- Creación de una tabla geoespacial con tipo de geometría polígono:
+
+ -- a) creación
+  
+    CREATE TABLE poligono ( 
+    gid serial, 
+    cve_pol varchar(5) primary key,
+    geom geometry (polygon,4326)
+    );
+  
+--  b) población directa de la tabla:
+  
+    INSERT INTO poligono (geom, cve_pol) 
+    VALUES 
+    (ST_GeomFromText('POLYGON(( -99.676730756959842 19.285247464898884, 
+    -99.656254900973110 19.29123515121525, -99.654919288512602 19.271702964576015,
+    -99.676730756959842 19.285247464898884))',4326), 'a1');
+    
+    
+--4.- Creación de una tabla geoespacial con tipo de geometría multi-lineas:
+
+ -- a) creación
+    
+    
+    CREATE TABLE multilineas ( 
+    gid serial, 
+    cve_multi varchar(5) primary key, 
+    altura int,
+    geom geometry (multilinestring, 4326)
+    );
+    
+ -- b) población
+
+    INSERT INTO multilineas (geom, cve_multi, altura) 
+    VALUES 
+    (ST_GeomFromText('MULTILINESTRING((-99.2180429982 19.4517819566,-99.2152823819 19.4467146298),
+    (-99.2134355496 19.447617472,-99.2124700931 19.4476576241,-99.2107648102 19.4472127764),
+    (-99.2109194879 19.4462564486,-99.2107439854 19.4454214266,
+    -99.2108499795 19.4451259518, -99.2080 19.4572 ,-99.2180429982 19.4517819566))',4326), 'a1', 2545),
+    (ST_GeomFromText('MULTILINESTRING((-99.2280429982 19.4517819566,-99.2172823819 19.4497146298),
+    (-99.2334355496 19.487617472,-99.2124700931 19.4476576241,-99.2107648102 19.4472127764))',4326), 'a2',  2547) ;
+
+--5.- Creación de una tabla geoespacial con tipo de geometría multi-polígonos:
+
+--  a) creación
+  
+    CREATE TABLE poligonos_multiples ( 
+    gid serial, 
+    cve_pol varchar(5) primary key,
+    geom geometry (multipolygon,4326)
+    );
+  
+--  b) población de una tabla geoespacial
+  
+    INSERT INTO poligonos_multiples (geom, cve_pol) 
+    VALUES 
+    (ST_GeomFromText('multipolygon((( -99.676730756959842 19.285247464898884, 
+    -99.656254900973110 19.29123515121525, -99.654919288512602 19.271702964576015,
+    -99.676730756959842 19.285247464898884),(-99.698837906547595 19.30264282728767,-99.652317673396198 19.268616864814696,
+    -99.713257462211772 19.249818541285261,-99.698837906547595 19.30264282728767)))',4326), 'a2'),
+    (ST_GeomFromText('multipolygon((( -99.616730756959842 19.283247464898884, 
+    -99.653254900973110 19.27123515121525,-99.659919288512602 19.278702964576015,-99.616730756959842 19.283247464898884)))',4326),'a3');
+    
+    
+-- 6.- Sistemas de Referencia Geoespacial:
+    
+    -- En México utilizamos coordenadas geográficas consideradas dentro del código EPSG: 4326 (sistema geográfico), así como
+    --códigos referentes a proyecciones como "UTM" o "CCL". Para los códigos EPSG-UTM se encuentran dentro de los 326+numero de zona UTM,
+    --p.ej. EPSG: 32614 correpondiente a la zona 14 utm en la cual se encuentra la Ciudad MX o  la proyección CCL, considerada 
+    --  en el  EPSG:6372. 
+    
+-- Definicion de coordenadas a una tabla geoespacial a la cual no se le definió sistema de referencia en su importación:
+
+  -- a)se agrega, a la tabla de interes, el campo que contendrá la geometría y la especificación del sistema de referencia que corresponda: 
+  ALTER TABLE red_vial ADD COLUMN geom_  geometry (MultiLineString,4326);
+  -- b) se actualiza el campo agregado a partir del campo geom existente:
+  UPDATE red_vial SET geom_=ST_SetSRID(geom,4326);
+  -- c) se elimina la columna geométrica que no contaba con sistema de referencia
+  ALTER TABLE red_vial DROP COLUMN geom RESTRICT;
+  
+  
+  -- Cambio de sistema de coordenadas
+    --a) Se agrega campo geométrico con los parametros que se pretende  tenga la nueva referencia espacial
+  
+  SELECT AddGeometryColumn('public', 'mitabla_utm', 'geom_utm', 32614, 'Point',2);
+    --b) actualizo el campo realizando la transformación de coordenadas 
+  UPDATE robos_utm SET geom_utm = ST_Transform(geom, 32614);
+    --c) elimino el campo de geometría anterior
+  SELECT DropGeometryColumn('robos_utm', 'geom');
+  
+  -- Indexado a tablas geoespaciales
+    --d) es relevante crear un indice espacial para agilizar busquedas
+  CREATE INDEX idx_puntos_utm ON puntos_utm  USING gist(geom_utm);
+  
+  --Eliminacion de tablas
+  
+     DROP TABLE puntos;
+  
+ 							 
+-- análisis geoespacial
+
+
+  -- distancia
+   -- ejemplo: selecciona la cantidad de postes de internet que tiene cada una de las avenidas de la CDMX dentro de  una distania de 450 mts.  
+      SELECT a.geom, a.nomavenida, count(b.geom) as postes_internet into postes_avenidas  
+      FROM avenidas_df as a, postes_internet  as b 
+      where st_distance(a.geom, b.geom) <= 450 GROUP BY a.geom, a.nomvial ORDER BY postes_internet DESC;
+
+  -- unión  o disolución
+      -- ejemplo : unir los segmentos de una vialidad en funcion de su nombre.
+      SELECT row_number() OVER () AS "gid", nomvial, st_union(geom) as geom into avenidas_df 
+      FROM avenidas_cdmx 
+      GROUP BY nomvial;
+
+  -- buffer
+      -- ejemplo : crea una nueva tabla con un bufer de 700mts.  referente a las avenidas de la CDMX  
+      
+      select  st_buffer(geom, 700) 
+      into buffer_vialidades 
+      from avenidas_df 
+
+
+  -- contains 
+-- seleccina contenido de una capa dentro de otra, si se desea se pueden  agrupar  resultados por alguna variable 
+-- ejemplo:  cantidad de vialidades por tipo de vialidad en la CDMX, considerando que la tabla de insumo tiene datos de vialidades de todos los estados 
+ -- en México
+  
+    select count(r.tipo_vial), r.tipo_vial from red_vial as r, estados as e 
+    where st_contains(e.geom, r.geom_) and e.nom_ent = 'Ciudad de México'  
+    group by tipo_vial;
+
+-- Intersect    hacer una selección y asignación de datos en una nueva tabla  en función del  área de polígonos que se interseta, ej. más de 80% 
+
+  select a.edo_reg, b.cvegeo, b.nom_mun, b.geom 
+  into mun_2015y_reg
+  from regiones as a, pob_muni01 as b
+  where st_intersects(a.geom,b.geom) 
+  and (st_area(st_intersection(a.geom,b.geom))/st_area(b.geom)) >0.80 
+  order by edo_reg; 
+
+
+
+
+ --estadística básica
+  select count(n) as total_casos ,max(n) as valor_maximo,   min(n) as valor_minimo, mode() within group (order by n) as moda,
+   (max(n::numeric)- min(n::numeric)) as rango, avg(pobtot) as promedio, stddev_pop(n) as desviacion_std,var_pop(n) as varianza 
+  from poblacion;
+
+-- información referente a la estructura de tablas
+  select column_name, data_type, udt_name 
+  from information_schema.columns
+   where table_schema = 'public' and table_name = 'municipios';
+   
+
+-- Generales:
+
+   -- exportar tablas a csv
+
+    copy (SELECT ductos_inegi.* from ductos_inegi , estados where st_contains(estados.geom, ductos_inegi.geom) and estados.nom_ent = 'Campeche') to 'C:\ductos_.csv' with csv header;
+
+    -- copia resultados a archivo csv con indentificador unico
+    copy (SELECT row_number() OVER () AS "gid", tomas.municipio, tomas.fecha2  from tomas , municipios where st_contains(municipios.geom, tomas.geom) and municipios.cvgeo = '15106') to 'C:\tomas_tol2_.csv' with csv header;
+
+    copy (select * from tomas as t, municipios as m where st_contains(m.geom,t.geom) and m.cvgeo = '15106' order by fecha2 desc) to 'C:\ductos_.csv' with csv header;
+
+    -- incorporar SHAPES a Postgres desde linea de comando (cmd)
+
+   C:\PostgreSQL\pg96\bin>shp2pgsql -I -s 4326 C:\shp_solo_mun_tomas.shp public.prueba_componentes | psql -U postgres -d db1
+   
+   -- Espero  sea de UTILIDAD.
+
