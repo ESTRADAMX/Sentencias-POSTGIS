@@ -238,6 +238,9 @@
 	update ageb set ent= left(cvegeo,2)
 	update ageb set mun= substring(cvegeo,3,3)
 	update ageb set localidad= right(cvegeo,3)
-   
+	
+-- crear y actualizar nuevo  campo a partir de campo existente modificando tipo de dato  
+ update  coneval_indicadores_pobreza_municipal_2015 set  plbm_pob_ = case when plbm_pob= 'n.d' then 0 
+ else cast(plbm_pob as integer) end    
    -- Espero  sea de UTILIDAD.
 
