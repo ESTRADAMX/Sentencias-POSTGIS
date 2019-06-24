@@ -242,5 +242,12 @@
 -- crear y actualizar nuevo  campo a partir de campo existente modificando tipo de dato  
  update  coneval_indicadores_pobreza_municipal_2015 set  plbm_pob_ = case when plbm_pob= 'n.d' then 0 
  else cast(plbm_pob as integer) end    
+ 
+ 
+ -- redondear valor de campo a dos decimales
+ round(((morbi/poblacion)*1000),2) as tasa_del_1000
+ 
+ 
+ 
    -- Espero  sea de UTILIDAD.
 
