@@ -231,7 +231,7 @@
    C:\PostgreSQL\pg96\bin>shp2pgsql -I -s 4326 C:\shp_solo_mun_tomas.shp public.prueba_componentes | psql -U postgres -d db1
    
    
-   --creación y actualización de campos a partir de campos existentes
+   --creación y actualización de campos a partir de campos existentes con cadenas  (valores a la izquierda, derecha, o en el interior)
 	
 	alter table ageb add column localidad varchar(3)
 
@@ -247,6 +247,18 @@
  -- redondear valor de campo a dos decimales
  round(((morbi/poblacion)*1000),2) as tasa_del_1000
  
+ -- agregar campo de reclas de valores y reclasificar 
+alter table ver_ add column reclas_rpm float
+update ver_age set reclas_rpm=
+case 
+  WHEN  "indice_rpm" = 0  THEN 0 
+  WHEN  "indice_rpm" < 1.1  THEN 1 
+  WHEN  "indice_rpm" < 2.1  THEN 2 
+   WHEN  "indice_rpm" < 3.1  THEN 3
+     WHEN  "indice_rpm" < 4.1  THEN 4 
+	   WHEN  "indice_rpm" > 4  THEN 5 
+end  
+
  
  
    -- Espero  sea de UTILIDAD.
