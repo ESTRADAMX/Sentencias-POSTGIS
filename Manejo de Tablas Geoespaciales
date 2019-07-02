@@ -257,7 +257,18 @@ case
    WHEN  "indice_rpm" < 3.1  THEN 3
      WHEN  "indice_rpm" < 4.1  THEN 4 
 	   WHEN  "indice_rpm" > 4  THEN 5 
-end  
+end
+
+---
+
+-- cambio de tipo de estructura geométrica en este caso  multipoint por point
+
+alter table incidencias_v3_12426 add column geome geometry (point,4326)
+update incidencias_v3_12426 set geome= st_geometryn (geom,1) 
+
+select * from incidencias_v3_12426 limit 1
+alter table incidencias_v3_12426 drop column geom
+alter table incidencias_v3_12426 rename column geome to geom
 
  
  
