@@ -278,5 +278,5 @@ from  public.agebs_imu2010_conapo
 where  cvegeo like '15%' or   cvegeo like '09%'
  
  
-   -- Espero  sea de UTILIDAD.
+   -- 
 
