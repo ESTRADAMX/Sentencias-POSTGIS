@@ -270,6 +270,12 @@ select * from incidencias_v3_12426 limit 1
 alter table incidencias_v3_12426 drop column geom
 alter table incidencias_v3_12426 rename column geome to geom
 
+
+--para seleccionar registros de una tabla en donde un campo comienza con algun caracter de interes
+select geom, cvegeo, pob_2010,imu2010, gmu2010 
+--into consulta
+from  public.agebs_imu2010_conapo  
+where  cvegeo like '15%' or   cvegeo like '09%'
  
  
    -- Espero  sea de UTILIDAD.
