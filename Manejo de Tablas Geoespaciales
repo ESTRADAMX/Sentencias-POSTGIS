@@ -278,5 +278,7 @@ from  public.agebs_imu2010_conapo
 where  cvegeo like '15%' or   cvegeo like '09%'
  
  
-   -- 
+ --rellenar con ceros columnas a la izquierda o derecha.lpadrpad
+alter table veracruz_colonias_ife2010 add column cve_muni varchar(3)
+update veracruz_colonias_ife2010 set cve_muni = lpad(municipio::text, 3, '0')
 
