@@ -265,7 +265,6 @@ end
 
 alter table incidencias_v3_12426 add column geome geometry (point,4326)
 update incidencias_v3_12426 set geome= st_geometryn (geom,1) 
-
 select * from incidencias_v3_12426 limit 1
 alter table incidencias_v3_12426 drop column geom
 alter table incidencias_v3_12426 rename column geome to geom
@@ -273,12 +272,15 @@ alter table incidencias_v3_12426 rename column geome to geom
 
 --para seleccionar registros de una tabla en donde un campo comienza con algun caracter de interes
 select geom, cvegeo, pob_2010,imu2010, gmu2010 
---into consulta
 from  public.agebs_imu2010_conapo  
 where  cvegeo like '15%' or   cvegeo like '09%'
  
  
- --rellenar con ceros columnas a la izquierda o derecha.lpadrpad
+ --rellenar con ceros columnas a la izquierda o derecha.  lpad rpad
 alter table veracruz_colonias_ife2010 add column cve_muni varchar(3)
 update veracruz_colonias_ife2010 set cve_muni = lpad(municipio::text, 3, '0')
+
+-- minusc y mayusc  en campo
+update tam.inc2018re set n_class = UPPER(n_class)
+update tam.i_2018re set n_class = LOWER(n_class)
 
