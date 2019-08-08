@@ -247,6 +247,11 @@
  -- redondear valor de campo a dos decimales
  round(((morbi/poblacion)*1000),2) as tasa_del_1000
  
+ 
+ -- reemplazar valores en una registro 
+update tam.inci_2018re set n_class = 'ALLHABITACION'	
+where n_class= 'AHABITACION'
+ 
  -- agregar campo de reclas de valores y reclasificar 
 alter table ver_ add column reclas_rpm float
 update ver_age set reclas_rpm=
