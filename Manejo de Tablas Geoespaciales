@@ -43,6 +43,9 @@
          insert into puntos (gid, nombre, region,c_ent, geom) 
          select gid, nom_mun, region, cve_ent, geom
          from fuente_puntos ;
+	 
+ --creacion de tabla geoespacial a partir de tb
+select *, st_setsrid(st_point(lon,lat),4326) as geom into esc_all_mexico_geom from e_completa_geometria
 
 
 --2.- Creación de una tabla geoespacial con tipo de geometría lineas:
