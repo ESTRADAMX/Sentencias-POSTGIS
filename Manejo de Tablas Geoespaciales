@@ -292,3 +292,14 @@ update veracruz_colonias_ife2010 set cve_muni = lpad(municipio::text, 3, '0')
 update tam.inc2018re set n_class = UPPER(n_class)
 update tam.i_2018re set n_class = LOWER(n_class)
 
+--reemplazo valor nulo , actualizar tabla
+update geografico.a_inegi_municipios_intercensales_2015_ok  set cvegeom= 23011 where cvegeom is null
+-- union tabla dando prioridad der
+select a.geom, b.* into geografico.a_tablabase_municipal_multiescalas_2458 from geografico.a_inegi_municipios_intercensales_2015_ok as a 
+join geografico.a_tablabase_municipal_multiescalas_ok as b
+on a.cvegeom = b.cvegeo
+
+-- renombra campo
+alter table geografico.a_tablabase_municipal_multiescalas_ok rename geom to geom_
+
+
