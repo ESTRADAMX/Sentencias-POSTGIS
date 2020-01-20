@@ -303,3 +303,8 @@ on a.cvegeom = b.cvegeo
 alter table geografico.a_tablabase_municipal_multiescalas_ok rename geom to geom_
 
 
+-- reemplazar un valor dentro de un campo 
+update catalogo_marco_geoestadistico_y_territorial_mx.a_ine_colonias_2010_333 set nombre = regexp_replace(nombre, 'ï¿½', 'Ñ', 'g');
+
+
+
