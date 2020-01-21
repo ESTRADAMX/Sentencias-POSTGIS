@@ -306,5 +306,9 @@ alter table geografico.a_tablabase_municipal_multiescalas_ok rename geom to geom
 -- reemplazar un valor dentro de un campo 
 update catalogo_marco_geoestadistico_y_territorial_mx.a_ine_colonias_2010_333 set nombre = regexp_replace(nombre, 'ï¿½', 'Ñ', 'g');
 
-
+-- intersec
+select st_intersection(a.geom, b.geom) as bgeom, a.*, b.cvegeo 
+ from geografico.a_conafor_areas_conserv_restaur_producc_2011 as a,
+ division_politico_administrativa_mx.a_dep206_municipios_2019 as b 
+ where b.cvegeo = '15106' and st_intersects(a.geom,b.geom) ;
 
