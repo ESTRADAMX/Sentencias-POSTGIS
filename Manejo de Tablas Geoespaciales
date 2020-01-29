@@ -312,3 +312,12 @@ select st_intersection(a.geom, b.geom) as bgeom, a.*, b.cvegeo
  division_politico_administrativa_mx.a_dep206_municipios_2019 as b 
  where b.cvegeo = '15106' and st_intersects(a.geom,b.geom) ;
 
+-- columnas existentes en una tabla 
+ copy (
+SELECT column_name as campo, column_name as descripcion                
+FROM information_schema.columns    
+WHERE table_schema = 'tablas_estadisticas'     
+AND table_name   = 'coneval_agebs_rezago_social_2010'   
+) to 'D:\ALFREDO\insumos p bd\descriptores_bdnacional\desc_ coneval_agebs_rezago_social_2010.csv' with csv header
+
+
