@@ -320,4 +320,12 @@ WHERE table_schema = 'tablas_estadisticas'
 AND table_name   = 'coneval_agebs_rezago_social_2010'   
 ) to 'D:\ALFREDO\insumos p bd\descriptores_bdnacional\desc_ coneval_agebs_rezago_social_2010.csv' with csv header
 
+-- extraer palabras de un texto convirtiendolo en arreglo y generando tabla alterna
+select a.index, a.x[1] as m, b.subgrupobio from (	
+select regexp_split_to_array(subgrupobio,E'\\s+') as x, index 
+from tablas_geograficas.p_conabio_mamiferos_2019 limit 3000
+) as a,  tablas_geograficas.p_conabio_mamiferos_2019 as b 
+where a.index = b.index;
+--
+
 
