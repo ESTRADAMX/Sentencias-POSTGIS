@@ -327,5 +327,9 @@ from tablas_geograficas.p_conabio_mamiferos_2019 limit 3000
 ) as a,  tablas_geograficas.p_conabio_mamiferos_2019 as b 
 where a.index = b.index;
 --
-
+-- agrego campo y actualizo en funcion de extraer valores de un campo
+ALTER TABLE datos_limpios_defunci_60mas ADD COLUMN cvegeo2 varchar
+update datos_limpios_defunci_60mas set cvegeo2 = CONCAT(substring(CVEGEO,1,2),substring(CVEGEO from 4 for 3))
+update  datos_limpios_defunci_60mas set cvegeo = cvegeo2
+alter table datos_limpios_defunci_60mas drop column cvegeo2
 
