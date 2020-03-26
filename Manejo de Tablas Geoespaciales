@@ -333,3 +333,8 @@ update datos_limpios_defunci_60mas set cvegeo2 = CONCAT(substring(CVEGEO,1,2),su
 update  datos_limpios_defunci_60mas set cvegeo = cvegeo2
 alter table datos_limpios_defunci_60mas drop column cvegeo2
 
+-- unir tablas
+select * from tabla1
+union all
+select * from tabla2;
+
