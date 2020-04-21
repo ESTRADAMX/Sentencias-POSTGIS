@@ -306,6 +306,10 @@ alter table geografico.a_tablabase_municipal_multiescalas_ok rename geom to geom
 -- reemplazar un valor dentro de un campo 
 update catalogo_marco_geoestadistico_y_territorial_mx.a_ine_colonias_2010_333 set nombre = regexp_replace(nombre, 'ï¿½', 'Ñ', 'g');
 
+-- relleno campo nulo
+ select COALESCE(cve_zm,0) AS metropolis from "200420COVID19MEXICO_CON_METROPOLIS" order by 
+ cve_zm desc
+
 -- intersec
 select st_intersection(a.geom, b.geom) as bgeom, a.*, b.cvegeo 
  from geografico.a_conafor_areas_conserv_restaur_producc_2011 as a,
