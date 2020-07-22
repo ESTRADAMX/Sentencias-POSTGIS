@@ -342,3 +342,10 @@ select * from tabla1
 union all
 select * from tabla2;
 
+-- consultas con filtros
+select clave, sum(pob) filter(where "año" = '2015') as pob2015, 
+sum(pob) filter(where "año" = '2020') as pob2020,
+sum(pob) filter(where "año" = '2030') as pob2030
+from fuente_conapo_proyecciones_municipales_2030 group by clave order by pob2030 desc
+--
+
