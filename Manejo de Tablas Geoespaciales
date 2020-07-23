@@ -347,5 +347,13 @@ select clave, sum(pob) filter(where "año" = '2015') as pob2015,
 sum(pob) filter(where "año" = '2020') as pob2020,
 sum(pob) filter(where "año" = '2030') as pob2030
 from fuente_conapo_proyecciones_municipales_2030 group by clave order by pob2030 desc
---
+
+--datos para consult por fechas
+
+alter table "200721COVID19MEXICO" add column fecha_sint date;
+update "200721COVID19MEXICO" set fecha_sint = "FECHA_SINTOMAS"::DATE
+SELECT *  --into "200720COVID19MEXICO_activos" 
+FROM "200721COVID19MEXICO" 
+WHERE "RESULTADO" = '1' and  fecha_sint BETWEEN '$2020-07-08' AND '$2020-07-21' order by fecha_sint asc; 
+
 
