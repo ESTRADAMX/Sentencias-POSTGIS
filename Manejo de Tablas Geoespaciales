@@ -356,4 +356,23 @@ SELECT *  --into "200720COVID19MEXICO_activos"
 FROM "200721COVID19MEXICO" 
 WHERE "RESULTADO" = '1' and  fecha_sint BETWEEN '$2020-07-08' AND '$2020-07-21' order by fecha_sint asc; 
 
+-- eliminar registros duplidados
+
+delete from ss_c_googleok
+    where exists (select 1
+                  from ss_c_googleok t2
+                  where t2.cve = ss_c_googleok.cve
+                  and t2.ctid > ss_c_googleok.ctid
+                 );
+                      -- si quiero eliminar por más campos
+                        t2.address = mytable.address and
+                        t2.zip = mytable.zip and
+                        t2.ctid > mytable.ctid
+                 );
+-- union izquierda a ciertos registros
+select a.*, b.cvegeoloc as cvloc_ageeml, b.lat_decima, b.lon_decima, b.geom as geom2
+into t_ss_union_b_cat_ageeml
+from  (select * from t_ss_union_a_iter where x_long is null) as a left join  ss_b_ageeml as b
+on a.cvegeoloc = b.cvegeoloc order by lat_decima desc
+
 
