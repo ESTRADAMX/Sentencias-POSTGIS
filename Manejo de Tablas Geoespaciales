@@ -369,10 +369,173 @@ delete from ss_c_googleok
                         t2.zip = mytable.zip and
                         t2.ctid > mytable.ctid
                  );
+		 
+		 
 -- union izquierda a ciertos registros
-select a.*, b.cvegeoloc as cvloc_ageeml, b.lat_decima, b.lon_decima, b.geom as geom2
-into t_ss_union_b_cat_ageeml
-from  (select * from t_ss_union_a_iter where x_long is null) as a left join  ss_b_ageeml as b
-on a.cvegeoloc = b.cvegeoloc order by lat_decima desc
+	select a.*, b.cvegeoloc as cvloc_ageeml, b.lat_decima, b.lon_decima, b.geom as geom2
+	into t_ss_union_b_cat_ageeml
+	from  (select * from t_ss_union_a_iter where x_long is null) as a left join  ss_b_ageeml as b
+	on a.cvegeoloc = b.cvegeoloc order by lat_decima desc
+
+-- administrativo
+-- seleccionar tablas dentro de esquemas
+
+
+
+	SELECT table_name, table_schema       
+
+	FROM information_schema.tables
+
+	where table_schema not like 'public'
+
+	and  table_schema not like 'tiger' 
+
+	and table_schema  not like 'tiger_data' 
+
+	and  table_schema not like 'topology'
+
+	 and  table_schema not like 'django_admin' 
+
+	 and  table_schema not like 'information_schema' 
+
+	 and  table_schema not like 'pg_catalog' 
+
+
+	 and  table_schema not like 'censo_gobiernos' ;
+
+
+
+
+
+-- seleccionar columnas y tipos de dato dentro de tablas 
+
+	SELECT table_name, column_name, data_type          
+
+	FROM information_schema.columns     
+
+	WHERE table_schema = 'dimension_educacion'  
+
+	and table_name = 'centros_de_atencion_multiple_cam_2019_sep'
+
+	order by table_name asc
+
+--contar tablas por esquema
+
+	select count(table_name), table_schema from (
+
+	SELECT table_name, table_schema       
+
+	FROM information_schema.tables ) as mea group by table_schema order by table_schema asc
+
+
+--- seleccionar bd, esquemas, tablas, columnas y tipos de datos en columnas para todo lo que hay dentro de la bd
+	SELECT *        
+
+	FROM information_schema.columns 
+
+	where table_schema not like 'public'
+
+	and  table_schema not like 'tiger' 
+
+	and table_schema  not like 'tiger_data' 
+
+	and  table_schema not like 'topology'
+
+	 and  table_schema not like 'django_admin' 
+
+	 and  table_schema not like 'information_schema' 
+
+	 and  table_schema not like 'pg_catalog' 
+
+	-- and  table_schema not like 'censo_gobiernos' 
+
+
+
+order by table_schema asc ;
+
+
+-- geoserv tablas administración campos y tablas :
+
+select a.*, b.tabla, b.nombre, b.in_geoserver,b.visibility from django_admin.cat_atributos as a
+
+left join django_admin.cat_datasets as b on a.dataset_id = b.id
+
+order by dataset_id asc
+
+-- datos en catalogo de admon geoserver
+select * from django_admin.cat_datasets  
+
+ where visibility = 'publico'
+
+--
+
+
+select * from  django_admin.cat_datasets order by id asc limit 7
+
+select * from  django_admin.cat_epsgs  limit 7
+
+select * from  django_admin.cat_grupos limit 7
+
+select * from  django_admin.cat_metadatos limit 7
+
+select * from  django_admin.cat_proveedores limit 7
+
+
+
+--
+
+-- conocet todas las tablas, columnas, registros y tamaños de tablas en las bd
+
+
+select * from ( 
+
+select a.*, b.esquema, c.size from (   
+
+   SELECT oid,relname as nom_tabla, obj_description(oid) as temas_relacionados,  relnatts as columnas, reltuples as registros
+
+FROM pg_class) as a , (select schemaname as esquema, tablename as tablas  from pg_catalog.pg_tables) as b  , (SELECT
+
+relname as table,
+
+pg_size_pretty(pg_total_relation_size(relid)) As size
+
+--pg_size_pretty(pg_total_relation_size(relid) – pg_relation_size(relid)) as external_size
+
+FROM pg_catalog.pg_statio_user_tables) as c
+
+where a.nom_tabla = b.tablas  and a.nom_tabla= c.table
+
+and (b.esquema like 'd%%' or  b.esquema like 'c%%' or  b.esquema like 'gasto%%' or  b.esquema like 'impacto%%' or  b.esquema like 'seguri%%'   )
+
+group by a.oid, esquema, a.nom_tabla, temas_relacionados, registros, columnas, c.size 
+
+order by esquema desc 
+
+
+	) as mea order by  esquema, nom_tabla asc
+
+	
+-- tamaño en bases de datos  de postgres
+
+select * from (
+
+
+	SELECT  db.datname AS nombre_db,
+
+	pg_size_pretty( pg_database_size(db.datname)) AS tamano,
+
+	pg_database_size(db.datname) AS tamano_detalle
+
+	FROM    pg_database AS db 
+
+
+
+)  as mea where nombre_db = 'b_database'
+
+
+
+
+
+
 
 
