@@ -220,6 +220,9 @@ select *, st_setsrid(st_point(lon,lat),4326) as geom into esc_all_mexico_geom fr
 
 -- Generales:
 
+--   valor diferente en consulta a cadenas
+select  * from siged_completo  where niv_edu != 'OTRO NIVEL EDUCATIVO'
+
    -- exportar tablas a csv
 
     copy (SELECT ductos_inegi.* from ductos_inegi , estados where st_contains(estados.geom, ductos_inegi.geom) and estados.nom_ent = 'Campeche') to 'C:\ductos_.csv' with csv header;
