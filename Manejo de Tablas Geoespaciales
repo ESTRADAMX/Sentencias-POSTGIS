@@ -377,7 +377,7 @@ delete from ss_c_googleok
 	from  (select * from t_ss_union_a_iter where x_long is null) as a left join  ss_b_ageeml as b
 	on a.cvegeoloc = b.cvegeoloc order by lat_decima desc
 
--- administrativo
+-- Administrativo
 -- seleccionar tablas dentro de esquemas
 
 
@@ -399,7 +399,6 @@ delete from ss_c_googleok
 	 and  table_schema not like 'information_schema' 
 
 	 and  table_schema not like 'pg_catalog' 
-
 
 	 and  table_schema not like 'censo_gobiernos' ;
 
@@ -519,7 +518,6 @@ order by esquema desc
 
 select * from (
 
-
 	SELECT  db.datname AS nombre_db,
 
 	pg_size_pretty( pg_database_size(db.datname)) AS tamano,
@@ -527,18 +525,65 @@ select * from (
 	pg_database_size(db.datname) AS tamano_detalle
 
 	FROM    pg_database AS db 
-
-
-
 )  as mea where nombre_db = 'b_database'
 
 
 
--- ver valores de campo iguales
+-- booleano para conocer valores entre  campos iguales
 select cct, a_financ, mont_av_int,("a_financ"::real = "mont_av_int")::boolean as is_boolean
 from escuelas_alcien_ok  order by is_boolean asc
 
 
+-- duplicados en registros
+delete from ss_d_google_nolocalizadas
+    where exists (select 1
+                  from ss_d_google_nolocalizadas t2
+                  where t2.cv_goonl = ss_d_google_nolocalizadas.cv_goonl
+                  and t2.ctid > ss_d_google_nolocalizadas.ctid
+                 );
+
+--Centroides
+SELECT ST_CENTROID(___shp_entidades_covid_0720.geom) AS geom, cve_ent
+--into centroides_estados 
+FROM ___shp_entidades_covid_0720
+
+select * from centroides_estados
+
+SELECT ST_pointONsurface(___shp_entidades_covid_0720.geom) AS geom, cve_ent
+--into cen_pointosurface_estados 
+FROM ___shp_entidades_covid_0720
+
+-- buenisima 
+SELECT point_inside_geometry(borra_punto.geom) AS geom
+into cen_pointinside_borra_punto
+FROM borra_punto
+
+--
+CREATE OR REPLACE FUNCTION point_inside_geometry(param_geom geometry)
+  RETURNS geometry AS
+$$
+  DECLARE
+     var_cent geometry := ST_Centroid(param_geom);
+     var_result geometry := var_cent;
+  BEGIN
+  -- If the centroid is outside the geometry then
+  -- calculate a box around centroid that is guaranteed to intersect the geometry
+  -- take the intersection of that and find point on surface of intersection
+ IF NOT ST_Intersects(param_geom, var_cent) THEN
+  var_result := ST_PointOnSurface(ST_Intersection(param_geom, ST_Expand(var_cent, ST_Distance(var_cent,param_geom)*2) ));
+ END IF;
+ RETURN var_result;
+  END;
+  $$
+  LANGUAGE plpgsql IMMUTABLE STRICT
+  COST 100;
+
+--- coalesce  null  nulos reemplazar
+SELECT
+	product,
+	(price - COALESCE(discount,0)) AS net_price
+FROM
+	items;
 
 
 
