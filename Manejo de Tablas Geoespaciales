@@ -486,7 +486,7 @@ select * from  django_admin.cat_proveedores limit 7
 
 --
 
--- conocet todas las tablas, columnas, registros y tamaños de tablas en las bd
+-- conocer todas las tablas, columnas, registros y tamaños de tablas en las bd
 
 
 select * from ( 
@@ -588,7 +588,40 @@ SELECT
 FROM
 	items;
 
+-- estadisticas 1
+select count(monto_dec) as universo ,max(monto_dec) as valor_maximo,   min(monto_dec) as valor_minimo, mode() within group (order by monto_dec) as moda,
+   (max(monto_dec::numeric)- min(monto_dec::numeric)) as rango, avg(monto_dec) as promedio, median(monto_dec) as mediana,  stddev_pop(monto_dec) as desviacion_std,var_pop(monto_dec) as varianza 
+  from escuelas_alcien_ok;
+  
+  --
+  CREATE FUNCTION _final_median(anyarray) RETURNS float8 AS $$ 
+  WITH q AS
+  (
+     SELECT val
+     FROM unnest($1) val
+     WHERE VAL IS NOT NULL
+     ORDER BY 1
+  ),
+  cnt AS
+  (
+    SELECT COUNT(*) as c FROM q
+  )
+  SELECT AVG(val)::float8
+  FROM 
+  (
+    SELECT val FROM q
+    LIMIT  2 - MOD((SELECT c FROM cnt), 2)
+    OFFSET GREATEST(CEIL((SELECT c FROM cnt) / 2.0) - 1,0)  
+  ) q2;
+$$ LANGUAGE sql IMMUTABLE;
 
+CREATE AGGREGATE median(anyelement) (
+  SFUNC=array_append,
+  STYPE=anyarray,
+  FINALFUNC=_final_median,
+  INITCOND='{}'
+);
+--
 
 
 
