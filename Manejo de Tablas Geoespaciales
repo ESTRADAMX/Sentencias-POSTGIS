@@ -593,6 +593,15 @@ select count(monto_dec) as universo ,max(monto_dec) as valor_maximo,   min(monto
    (max(monto_dec::numeric)- min(monto_dec::numeric)) as rango, avg(monto_dec) as promedio, median(monto_dec) as mediana,  stddev_pop(monto_dec) as desviacion_std,var_pop(monto_dec) as varianza 
   from escuelas_alcien_ok;
   
+  -- estadisticos con coeficiente de variacion
+   select *, (desviacion_std::float/promedio::float) as coef_var from (
+	    select count(pobtot_d) as poblacion ,max(pobtot_d) as valor_maximo,   min(pobtot_d) as valor_minimo, 
+  mode() within group (order by pobtot_d) as moda, (max(pobtot_d::numeric)- min(pobtot_d::numeric)) as rango
+  , median(pobtot_d) as mediana,round(avg(pobtot_d),3) as promedio,   round(stddev_pop(pobtot_d),3)
+  as desviacion_std,round(var_pop(pobtot_d),3) as varianza, count(*) filter( where pobtot is null) as nulos
+  from shp_iter_mx_2010
+	  ) as mea;
+  
   --
   CREATE FUNCTION _final_median(anyarray) RETURNS float8 AS $$ 
   WITH q AS
