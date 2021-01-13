@@ -632,5 +632,11 @@ CREATE AGGREGATE median(anyelement) (
 );
 --
 
+-- disolver con postgi
+select distinct ST_Union(geom) as geom, county as county, sum(schools) as schools,
+sum(childcare), sum(respopint) as rez, etc... into countyreport
+from munsumreport
+group by county;
 
+--
 
