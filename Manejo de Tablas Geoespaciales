@@ -652,3 +652,19 @@ operadores relacionales son los siguientes:
 
  select * from libros
   where autor<>'Borges';
+  
+  --  valores dominio
+  --Crear dominio
+create domain d_provincias as varchar(20) check(value in ('Castellon', 
+ 'Toluca', 'México'));
+--tabla
+CREATE TABLE public.prueva_dominio(
+id INT,
+estado d_provincias);
+select * from prueva_dominio;
+
+INSERT INTO prueva_dominio (id, estado) 
+        values 
+        ( 3, 'Alicante'),( 4, 'Toluca') ;
+
+--
