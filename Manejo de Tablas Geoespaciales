@@ -386,7 +386,73 @@ delete from ss_c_googleok
 	from  (select * from t_ss_union_a_iter where x_long is null) as a left join  ss_b_ageeml as b
 	on a.cvegeoloc = b.cvegeoloc order by lat_decima desc
 
--- Administrativo
+-- Administrativo  o gestion  administración
+
+-- Tamaño de la BD
+SELECT pg_database.datname, pg_size_pretty(pg_database_size(pg_database.datname)) 
+AS size FROM pg_database where datname = 'bd_muestra';
+
+--Listado de tablas en la bd
+
+	
+SELECT  table_name, table_type, table_schema,table_catalog
+FROM information_schema.tables
+WHERE table_catalog = 'bd_muestra'
+AND table_schema = 'public'
+
+- Relaciones y restricciones entre las tablas
+select tabla as tabla_base, tabla_relacionada, campo as campo_relacion, constraint_ from(
+select distinct(constraint_name) as constraint_, column_name as campo, foreign_table_name as tabla, table_name as tabla_relacionada  from (
+SELECT
+    tc.table_schema, 
+    tc.constraint_name, 
+    tc.table_name, 
+    kcu.column_name, 
+    ccu.table_schema AS foreign_table_schema,
+    ccu.table_name AS foreign_table_name,
+    ccu.column_name AS foreign_column_name 
+FROM 
+    information_schema.table_constraints AS tc 
+    JOIN information_schema.key_column_usage AS kcu
+      ON tc.constraint_name = kcu.constraint_name
+      AND tc.table_schema = kcu.table_schema
+    JOIN information_schema.constraint_column_usage AS ccu
+      ON ccu.constraint_name = tc.constraint_name
+      AND ccu.table_schema = tc.table_schema
+WHERE tc.constraint_type = 'FOREIGN KEY'
+	) as mia
+	)as mc
+	
+
+-- Atributos en las tablas y tipos de datos  
+
+
+SELECT table_name, column_name, data_type 
+FROM information_schema.columns   
+WHERE table_schema = 'public'   
+order by table_name asc
+	
+
+
+-- Síntesis Esquemas, tablas, columnas y registros 
+select * from ( 
+select a.*, b.esquema, c.size from (   
+   SELECT oid,relname as nom_tabla, obj_description(oid) as temas_relacionados,  relnatts as columnas, reltuples as registros
+FROM pg_class) as a , (select schemaname as esquema, tablename as tablas  from pg_catalog.pg_tables) as b  , (SELECT
+relname as table,
+pg_size_pretty(pg_total_relation_size(relid)) As size
+FROM pg_catalog.pg_statio_user_tables) as c
+where a.nom_tabla = b.tablas  and a.nom_tabla= c.table
+group by a.oid, esquema, a.nom_tabla, temas_relacionados, registros, columnas, c.size 
+order by esquema desc 
+	
+	) as mc 
+	
+
+
+
+
+
 -- seleccionar tablas dentro de esquemas
 
 
