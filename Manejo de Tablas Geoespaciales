@@ -128,7 +128,7 @@ select *, st_setsrid(st_point(lon,lat),4326) as geom into esc_all_mexico_geom fr
     -99.653254900973110 19.27123515121525,-99.659919288512602 19.278702964576015,-99.616730756959842 19.283247464898884)))',4326),'a3');
     
     
-    -- creación de campo geométrico a partir de campos
+    -- creación de campo geométrico a partir de campos geometría a partir de csv
     alter table carpetas_completa_2016_2020 add column geom geometry;
 UPDATE carpetas_completa_2016_2020 SET geom = st_makepoint((longitud::float), (latitud::float))
 where latitud <> 'NA' and longitud <> 'NA';
