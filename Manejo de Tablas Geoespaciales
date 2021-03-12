@@ -128,6 +128,12 @@ select *, st_setsrid(st_point(lon,lat),4326) as geom into esc_all_mexico_geom fr
     -99.653254900973110 19.27123515121525,-99.659919288512602 19.278702964576015,-99.616730756959842 19.283247464898884)))',4326),'a3');
     
     
+    -- creación de campo geométrico a partir de campos
+    alter table carpetas_completa_2016_2020 add column geom geometry;
+UPDATE carpetas_completa_2016_2020 SET geom = st_makepoint((longitud::float), (latitud::float))
+where latitud <> 'NA' and longitud <> 'NA';
+    
+    
 -- 6.- Sistemas de Referencia Geoespacial:
     
     -- En México utilizamos coordenadas geográficas consideradas dentro del código EPSG: 4326 (sistema geográfico), así como
@@ -667,4 +673,3 @@ INSERT INTO prueva_dominio (id, estado)
         values 
         ( 3, 'Alicante'),( 4, 'Toluca') ;
 
---
