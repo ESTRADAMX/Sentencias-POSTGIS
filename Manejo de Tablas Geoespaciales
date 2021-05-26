@@ -739,3 +739,49 @@ INSERT INTO prueva_dominio (id, estado)
         values 
         ( 3, 'Alicante'),( 4, 'Toluca') ;
 
+---
+gserv
+centrar etiqueta en polígonos
+ <se:Rule>
+          <se:TextSymbolizer>
+        <se:Geometry>
+          <ogc:Function name="centroid">
+            <ogc:PropertyName>geom</ogc:PropertyName>
+          </ogc:Function>
+        </se:Geometry>
+        <se:Label>
+          <ogc:PropertyName>nom_mun</ogc:PropertyName>
+        </se:Label>
+        <se:Font>
+          <se:CssParameter name="font-family">Arial</se:CssParameter>
+          <se:CssParameter name="font-size">11</se:CssParameter>
+          <se:CssParameter name="font-style">normal</se:CssParameter>
+          <se:CssParameter name="font-weight">bold</se:CssParameter>
+        </se:Font>
+        <se:LabelPlacement>
+          <se:PointPlacement>
+            <se:AnchorPoint>
+              <se:AnchorPointX>
+                <ogc:Literal>0.0</ogc:Literal>
+              </se:AnchorPointX>
+              <se:AnchorPointY>
+                <ogc:Literal>0.5</ogc:Literal>
+              </se:AnchorPointY>
+            </se:AnchorPoint>
+            <se:Rotation>
+              <ogc:Literal>0</ogc:Literal>
+            </se:Rotation>
+          </se:PointPlacement>
+        </se:LabelPlacement>
+
+        <se:VendorOption name="conflictResolution">true</se:VendorOption>
+        <se:VendorOption name="goodnessOfFit">0</se:VendorOption>
+        <se:VendorOption name="autoWrap">60</se:VendorOption>
+    
+      </se:TextSymbolizer>
+        </se:Rule>
+
+---
+
+
+
