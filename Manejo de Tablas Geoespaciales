@@ -822,4 +822,16 @@ Agregar un valor por default a una columna
 
 ALTER TABLE empleados ALTER COLUMN nombre_columna SET DEFAULT 125
 
-
+-- join de varias tablas , unir varias tablas 
+select a.geom, a.cvegeo, a.nomgeo, 
+b.tot_mun_lesiones as tot_les_escorp_10_21, 
+c.tot_mun_lesiones as tot_les_araña_10_21,
+d.tot_egr_escorp_00_21 as tot_egr_escorp_00_21,
+e.tot_egr_araña_00_21 as tot_egr_araña_00_21
+into tabla_sintesis_lesiones_egresos_municipal
+from mgm2020 as a 
+left join d_lesiones_escorpion_x_mun_espacializado_2010_2021 as b on a.cvegeo=b.cve_mun
+left join d_lesiones_araña_x_mun_espacializado_2010_2021 as c on a.cvegeo=c.cve_mun
+left join d_egresos_unido_escorpion_2000_2021_ok as d on a.cvegeo=d.cvegeo
+left join d_egresos_unido_arañas_2000_2021_ok as e on  a.cvegeo=e.cvegeo
+--
