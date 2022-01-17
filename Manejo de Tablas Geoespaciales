@@ -433,6 +433,12 @@ WHERE table_schema = 'public'
 order by table_name asc
 	
 
+--  atributos o campos de una sola tabla 
+SELECT table_name, column_name, data_type 
+FROM information_schema.columns   
+WHERE table_schema = 'public'  
+and table_name ='cedula_revision_cedula_indigenas__200920'
+
 
 -- Síntesis Esquemas, tablas, columnas y registros 
 select * from ( 
