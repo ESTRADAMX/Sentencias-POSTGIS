@@ -841,3 +841,12 @@ left join d_lesiones_araña_x_mun_espacializado_2010_2021 as c on a.cvegeo=c.cve
 left join d_egresos_unido_escorpion_2000_2021_ok as d on a.cvegeo=d.cvegeo
 left join d_egresos_unido_arañas_2000_2021_ok as e on  a.cvegeo=e.cvegeo
 --
+
+-- cambio de miltisurface a multypoligon
+CREATE TABLE covi_leta AS
+  SELECT  * ,
+         ST_CurveToLine(geometry) AS geom2
+  FROM   letalidad_covi
+;
+alter table covi_leta drop geometry;
+
